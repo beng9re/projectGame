@@ -3,6 +3,7 @@ package game;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.util.Random;
 
 import javax.swing.JPanel;
 
@@ -23,6 +24,8 @@ public class GamePanel extends JPanel implements Runnable{
 	boolean flag=true;//게임가동여부를 결정하는 변수
 	Thread thread; //게임진행 운영 쓰레드
 	Player player;
+	ObjectManager objectManager; //객체 명단 관리자
+	Enemy enemy;
 	
 	public GamePanel() {
 		//크기 지정
@@ -35,10 +38,26 @@ public class GamePanel extends JPanel implements Runnable{
 	}
 	
 	public void init(){
-		//주인공 등장 시키기
 		
-		player=new Player(100, 200,50, 50);
-	
+		
+		//명단관리자 생성
+		objectManager=new ObjectManager();
+		
+		
+		//주인공 등장 시키기
+		player=new Player(objectManager,ObjectId.Player,100, 200,50, 50);
+		objectManager.addObject(player);
+		
+		Random r=new Random();
+		
+		//적군등장
+		for(int i=0;i<10;i++){
+		int y=r.nextInt((HEIGHT*SCALE-50-(50)+1+50));
+		int x=r.nextInt(WIDTH*SCALE+500);
+		enemy=new Enemy(objectManager,ObjectId.Enemy,x,y,50,50);
+		objectManager.addObject(enemy);
+		}
+		
 		//패널과 키보드 리스너 연결
 		this.addKeyListener(new KeyBoard(player));
 	}
@@ -47,8 +66,11 @@ public class GamePanel extends JPanel implements Runnable{
 		g.setColor(Color.BLACK);
 		//색체움
 		g.fillRect(0, 0, WIDTH*SCALE, HEIGHT*SCALE);
+		for (int i = 0; i < objectManager.list.size(); i++) {
+			GameObject obj=objectManager.list.get(i);
+			obj.render(g);
+		}
 	
-		player.render(g);
 	
 	}
 	
@@ -60,7 +82,14 @@ public class GamePanel extends JPanel implements Runnable{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			player.tick();
+			
+			//오브젝트 매니져에 등록된 모든 객체를 대상으로 tick() 호출
+			for (int i = 0; i < objectManager.list.size(); i++) {
+				GameObject obj=objectManager.list.get(i);
+				obj.tick();
+			}
+			
+			//player.tick();
 			repaint();
 			
 		

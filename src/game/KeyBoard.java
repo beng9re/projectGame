@@ -29,8 +29,9 @@ public class KeyBoard extends KeyAdapter{
 			break;
 		case KeyEvent.VK_SPACE:
 			//ÃÑ¾Ë»ý¼º
-			new Bullet(player.x,player.y, 5, 5);
+			player.fire();
 			break;
+		
 		default:
 			break;
 		}

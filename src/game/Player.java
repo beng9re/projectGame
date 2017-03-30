@@ -7,22 +7,15 @@ package game;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.event.KeyListener;
+import java.awt.Graphics2D;
 
-public class Player{
-	int x;
-	int y;
-	int width;
-	int height;
-	int velX;
-	int velY;
-	Bullet bullet;
+
+public class Player extends GameObject{
+
 	
-	public Player(int x,int y,int width,int height){
-		this.x=x;
-		this.y=y;
-		this.width=width;
-		this.height=height;
+	
+	public Player(ObjectManager obj,ObjectId id,int x,int y,int width,int height){
+		super(obj,id,x,y,width,height);
 		
 		
 		
@@ -30,7 +23,8 @@ public class Player{
 	
 	//총알 발사 행위를 정의한다!1
 	public void fire(){
-		bullet =new Bullet(x, y, 10, 10);
+		Bullet bullet =new Bullet(objectManager,ObjectId.Bullet,x, y, 10, 10);
+		objectManager.addObject(bullet);
 	}
 	
 	
@@ -39,12 +33,17 @@ public class Player{
 	public void tick(){
 		x+=velX;
 		y+=velY;
+		
+		//사강형이 나가를 따라다니게
+		rect.setBounds(x, y, width, height);
 	}
 	
 	//변화된 값을 화면에 그려지게 할 메서드!!
 	public void render(Graphics g){
 		g.setColor(Color.WHITE);//페인트 색 바꾸기
-		g.drawRect(x, y, width, height);
+		//g.drawRect(x, y, width, height);
+		Graphics2D g2=(Graphics2D)g;
+		g2.draw(rect);
 		
 		
 	}
